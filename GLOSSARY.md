@@ -21,3 +21,13 @@ _Avoid_: Visitor, client
 **Owner**:
 A person who configures Event Types and availability.
 _Avoid_: Host, administrator
+
+**Availability**:
+The working-hours periods from which free starts for an Event Type can be offered.
+
+**Time Slot**:
+A local interval with a start and an end that is available for one Event Type.
+_Avoid_: Appointment slot, timespan
+
+**Conflict**:
+The rejection of a Booking because its interval overlaps another Booking.
