@@ -3,7 +3,6 @@ experimental = true
 
 [tools]
 node = "24.22.1"
-pitchfork = "0.3.2"
 
 [tasks.install]
 run = "npm ci"
