@@ -57,3 +57,68 @@
 .booking-page p {
   margin-bottom: 24px;
 }
+
+.catalog-page {
+  min-height: 100vh;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 48px 20px;
+  text-align: center;
+}
+
+.event-types,
+.slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.event-type-card,
+.slots button,
+.booking-form input,
+.booking-form button,
+.catalog-page article {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.event-type-card {
+  display: grid;
+  gap: 8px;
+  padding: 20px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.slots button {
+  padding: 12px;
+  cursor: pointer;
+}
+
+.booking-form {
+  display: grid;
+  gap: 12px;
+  max-width: 420px;
+  margin: 24px auto 0;
+  text-align: left;
+}
+
+.booking-form label {
+  display: grid;
+  gap: 6px;
+}
+
+.booking-form input,
+.booking-form button {
+  min-height: 44px;
+  padding: 8px 12px;
+}
+
+.catalog-page article {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0;
+  padding: 16px;
+}

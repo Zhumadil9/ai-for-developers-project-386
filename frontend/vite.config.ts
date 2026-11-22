@@ -7,6 +7,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/health': 'http://localhost:3001',
+      '/event-types': 'http://localhost:3001',
+      '/bookings': 'http://localhost:3001',
     },
   },
 })

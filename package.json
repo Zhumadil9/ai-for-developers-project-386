@@ -14,7 +14,8 @@
     "lint": "npm run lint -w backend && npm run lint -w frontend",
     "typecheck": "npm run typecheck -w backend && npm run build -w frontend",
     "test": "npm run test -w backend && npm run test -w frontend",
-    "check": "npm run contract && npm run sdk && npm run lint && npm run typecheck && npm run test",
+    "test:e2e": "npm run test:e2e -w frontend",
+    "check": "npm run contract && npm run sdk && npm run lint && npm run typecheck && npm run test && npm run test:e2e",
     "dev": "npm run dev -w backend",
     "dev:frontend": "npm run dev -w frontend"
   }
