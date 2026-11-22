@@ -10,7 +10,11 @@
 
 ## Стек
 
-- Разное
+- React + TypeScript + Vite
+- Express + TypeScript
+- TypeSpec + OpenAPI
+- Vitest + Supertest
+- mise + GitHub Actions
 
 ## Установка
 
@@ -19,11 +23,28 @@
 ```bash
 git clone https://github.com/Zhumadil9/ai-for-developers-project-386.git
 cd ai-for-developers-project-386
+mise run install
 ```
 
 ## Использование
 
-<!-- Добавьте примеры запуска и запись asciinema — именно это смотрит работодатель -->
+Запустить бекенд:
+
+```bash
+mise run dev
+```
+
+Запустить фронтенд:
+
+```bash
+mise run dev-frontend
+```
+
+Запустить все проверки:
+
+```bash
+mise run check
+```
 
 ---
 
