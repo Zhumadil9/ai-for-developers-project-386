@@ -5,10 +5,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
 
 vi.mock('./api/generated', () => ({
-  health: vi.fn().mockResolvedValue({
-    data: { status: 'ok' },
-    error: undefined,
-  }),
+  listEventTypes: vi.fn().mockResolvedValue({ data: [
+    { id: 'intro', name: 'Знакомство', description: 'Короткое знакомство', durationMinutes: 30 },
+  ], error: undefined }),
+  listSlots: vi.fn().mockResolvedValue({ data: [], error: undefined }),
+  createBooking: vi.fn(),
+  listUpcomingBookings: vi.fn().mockResolvedValue({ data: [], error: undefined }),
 }))
 
 vi.mock('./api/generated/client', () => ({
@@ -30,19 +32,16 @@ describe('главная страница', () => {
     ).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('link', { name: 'Записаться' }))
-
-    expect(
-      screen.getByRole('heading', { name: 'Запись на встречу' }),
-    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Выберите встречу' })).toBeInTheDocument()
   })
 
-  it('открывает заглушку Каталога типов встреч по прямому адресу', () => {
+  it('открывает каталог типов встреч по прямому адресу', async () => {
     render(
       <MemoryRouter initialEntries={['/booking']}>
         <App />
       </MemoryRouter>,
     )
 
-    expect(screen.getByText('Каталог типов встреч')).toBeInTheDocument()
+    expect(await screen.findByText('Знакомство')).toBeInTheDocument()
   })
 })
