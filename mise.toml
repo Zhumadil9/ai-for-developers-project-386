@@ -27,3 +27,6 @@ run = "npm run lint"
 
 [tasks.check]
 run = "npm run check"
+
+[tasks.docker]
+run = "docker build -t calendar-booking:test ."

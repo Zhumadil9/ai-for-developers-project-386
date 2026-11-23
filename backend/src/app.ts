@@ -1,4 +1,6 @@
 import express from 'express'
+import { existsSync } from 'node:fs'
+import path from 'node:path'
 
 export type EventType = {
   id: string
@@ -148,6 +150,25 @@ export function createApp() {
       .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
     response.status(200).json(upcoming)
   })
+
+  const frontendDist = existsSync(path.resolve(process.cwd(), 'frontend/dist'))
+    ? path.resolve(process.cwd(), 'frontend/dist')
+    : path.resolve(process.cwd(), '../frontend/dist')
+  if (existsSync(frontendDist)) {
+    app.use(express.static(frontendDist))
+    app.use((_request, response, next) => {
+      if (_request.method !== 'GET' || _request.path.startsWith('/api/') ||
+          _request.path === '/health' ||
+          _request.path === '/event-types' ||
+          _request.path.startsWith('/event-types/') ||
+          _request.path === '/bookings' ||
+          _request.path.startsWith('/bookings/')) {
+        next()
+        return
+      }
+      response.sendFile(path.join(frontendDist, 'index.html'))
+    })
+  }
 
   return app
 }
