@@ -18,6 +18,9 @@ export type ConflictResponse = {
     };
 };
 
+/**
+ * The server accepts starts only within the next 14 calendar days beginning tomorrow in Asia/Almaty. Starts must align to 30-minute increments during 09:00–18:00 owner hours, and the event duration must end by 18:00. Overlapping bookings are rejected.
+ */
 export type CreateBookingRequest = {
     eventTypeId: string;
     guestName: string;

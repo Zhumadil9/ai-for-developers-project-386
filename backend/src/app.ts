@@ -37,9 +37,55 @@ function localParts(date: Date) {
   return `${values.year}-${values.month}-${values.day}`
 }
 
+function addCalendarDays(day: string, days: number) {
+  const [year, month, date] = day.split('-').map(Number)
+  return new Date(Date.UTC(year, month - 1, date + days)).toISOString().slice(0, 10)
+}
+
+function localTimeParts(date: Date) {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Almaty',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(date)
+  const values = Object.fromEntries(parts.filter((part) => part.type !== 'literal').map((part) => [part.type, part.value]))
+  return {
+    hour: Number(values.hour),
+    minute: Number(values.minute),
+    second: Number(values.second),
+  }
+}
+
 function startForLocalDay(day: string, minutes: number) {
   const iso = `${day}T${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}:00+05:00`
   return new Date(iso)
+}
+
+function isWithinBookingRules(start: Date, durationMinutes: number) {
+  if (!Number.isFinite(start.getTime()) || start.getMilliseconds() !== 0) return false
+
+  const startDay = localParts(start)
+  const firstDay = addCalendarDays(localParts(new Date()), 1)
+  const lastDay = addCalendarDays(firstDay, 13)
+  if (startDay < firstDay || startDay > lastDay) return false
+
+  const startTime = localTimeParts(start)
+  const startMinutes = startTime.hour * 60 + startTime.minute
+  if (
+    startTime.second !== 0 ||
+    startTime.minute % 30 !== 0 ||
+    startMinutes < 9 * 60 ||
+    startMinutes >= 18 * 60
+  ) {
+    return false
+  }
+
+  const end = new Date(start.getTime() + durationMinutes * 60_000)
+  const endTime = localTimeParts(end)
+  const endMinutes = endTime.hour * 60 + endTime.minute
+  return localParts(end) === startDay && endMinutes <= 18 * 60
 }
 
 function overlaps(startA: Date, endA: Date, startB: Date, endB: Date) {
@@ -68,13 +114,10 @@ export function createApp() {
 
     const slots = []
     const now = new Date()
-    const firstDay = new Date(now)
-    firstDay.setDate(firstDay.getDate() + 1)
+    const firstDay = addCalendarDays(localParts(now), 1)
 
     for (let dayOffset = 0; dayOffset < 14; dayOffset += 1) {
-      const date = new Date(firstDay)
-      date.setDate(firstDay.getDate() + dayOffset)
-      const day = localParts(date)
+      const day = addCalendarDays(firstDay, dayOffset)
 
       for (let minutes = 9 * 60; minutes + eventType.durationMinutes <= 18 * 60; minutes += 30) {
         const start = startForLocalDay(day, minutes)
@@ -117,6 +160,14 @@ export function createApp() {
     }
 
     const startDate = new Date(start!)
+    if (!isWithinBookingRules(startDate, eventType!.durationMinutes)) {
+      response.status(400).json({
+        message: 'Booking time is outside the allowed window or working hours',
+        errors: ['start'],
+      })
+      return
+    }
+
     const endDate = new Date(startDate.getTime() + eventType!.durationMinutes * 60_000)
     const conflict = bookings.find((booking) =>
       overlaps(startDate, endDate, new Date(booking.start), new Date(booking.end)),
